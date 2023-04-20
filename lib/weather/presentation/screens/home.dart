@@ -1,61 +1,139 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:osama/weather/data/datasources/remote.dart';
 import 'package:osama/weather/data/repository/weather_repostory.dart';
-import 'package:osama/weather/domain/entites/weather.dart';
-import 'package:osama/weather/domain/repository/base_weather_repository.dart';
-import 'package:osama/weather/domain/usecases/get_weather_by_country.dart';
+import 'package:osama/weather/presentation/controller/weather_viewmodel.dart';
 
-class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+WeatherViewModel viewModel= WeatherViewModel(WeatherRepository(RemoteDataSource()));
 
-  @override
-  State<Home> createState() => _HomeState();
-}
+class Home extends StatelessWidget {
+  TextEditingController controller = TextEditingController();
+  BaseRemoteDataSource baseRemoteDataSource = RemoteDataSource();
 
-class _HomeState extends State<Home> {
-  TextEditingController controller=TextEditingController();
-  BaseRemoteDataSource baseRemoteDataSource=RemoteDataSource();
-   late BaseWeatherRepository baseWeatherRepository;
+  Home({super.key});
 
-   Weather? weather;
   @override
   Widget build(BuildContext context) {
-    baseWeatherRepository=WeatherRepository(baseRemoteDataSource);
-    return  Scaffold(
+    double baseWidth = MediaQuery.of(context).size.width;
+    double fem = MediaQuery.of(context).size.width / baseWidth;
+    double ffem = fem * 0.97;
+    double appPadding = 20;
+    double widthBox = MediaQuery.of(context).size.width / 2-(appPadding+appPadding/2);
+
+    return Scaffold(
       appBar: AppBar(
-        title: Text('Weather'),
+        title: Text('weather'.tr),
       ),
-      body: Padding(
+      body:Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
             TextFormField(
               controller: controller,
-              decoration: const InputDecoration(
-                label: Text("City Name"),
+              decoration:  InputDecoration(
+                label: Text("cityName".tr),
               ),
-
             ),
             TextButton(
                 onPressed: () async {
-                  weather =await GetWeatherByCityName(baseWeatherRepository).execute(controller.text);
-                  setState(() {});
+                  viewModel
+                      .getWeather(controller.text);
                 },
                 child: Text('Ok')),
-           if(weather!=null)
-           Column(
-             children: [
-               Text(weather!.cityName),
-               Text(weather!.description),
-               Text(weather!.main),
-               Text('pressure ${weather!.pressure}'),
-               Text('id ${weather!.id}'),
-             ],
-           ),
+            TextButton(
+                onPressed: () async {
+                  if(Get.locale==const Locale('ar')) {
+                    Get.updateLocale(const Locale('en'));
+                  }else{
+                    Get.updateLocale(const Locale('ar'));
+                  }
+                },
+                child: const Text('Change Language')),
+           Obx(
+                 () {
+                return Text("${viewModel.counter.value}");
+              }
+            ),
+            TextButton(
+                onPressed: () async {
+                  viewModel.increment();
+                },
+                child: Text('Plus')),
+            if (viewModel.weather != null)
+              Obx(()
+                 {
+                    return Column(
+                      children: [
+                        Text("${viewModel.counter.value}"),
+                        Text(viewModel.weather!.value.cityName),
+                        Text(viewModel.weather!.value.description),
+                        Text(viewModel.weather!.value.main),
+                        Text('pressure ${viewModel.weather!.value.pressure}'),
+                        Text('id ${viewModel.weather!.value.id}'),
+                      ],
+                    );
+                  }
+              ),
+            Container(
+              decoration:  BoxDecoration (
+                borderRadius:  BorderRadius.circular(13*fem),
+                color:  Color(0xff78fecf),
+                boxShadow:  [
+                  BoxShadow(
+                    color:  Color(0x3f000000),
+                    offset:  Offset(-4*fem, 5*fem),
+                    blurRadius:  2*fem,
+                  ),
+                ],
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                  width: widthBox,
+                  height: 150,
+                  child: Container(
+                    decoration:  BoxDecoration (
+                      borderRadius:  BorderRadius.circular(13*fem),
+                      color:  Color(0xfffde686),
+                      boxShadow:  [
+                        BoxShadow(
+                          color:  Color(0xfffde686),
+                          offset:  Offset(-4*fem, 5*fem),
+                          blurRadius:  2*fem,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: widthBox,
+                  height: 150,
+                  child: Container(
+                    decoration:  BoxDecoration (
+                      borderRadius:  BorderRadius.circular(13*fem),
+                      color:  Color(0xff78fecf),
+                      boxShadow:  [
+                        BoxShadow(
+                          color:  Color(0x3f000000),
+                          offset:  Offset(-4*fem, 5*fem),
+                          blurRadius:  2*fem,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+              ],
+            ),
+
           ],
         ),
       ),
     );
+
+
   }
 }

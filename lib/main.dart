@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:osama/core/language/translate.dart';
 import 'package:osama/weather/data/datasources/remote.dart';
 import 'package:osama/weather/data/repository/weather_repostory.dart';
 import 'package:osama/weather/domain/entites/weather.dart';
@@ -17,9 +19,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Flutter Demo',
-      home: const Home(),
+      translations: Translation(),
+      locale: const Locale("en"),
+      fallbackLocale: const Locale("en"),
+      home:  Home(),
     );
   }
 }
