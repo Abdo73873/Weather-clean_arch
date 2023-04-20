@@ -47,4 +47,5 @@ app.*.map.json
 lib/hello3.dart
 /lib/file1.txt
 /lib/hello3.dart
+/lib/hello4.dart
 file1.txt
