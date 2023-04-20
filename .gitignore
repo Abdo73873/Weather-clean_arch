@@ -46,4 +46,4 @@ app.*.map.json
 /android/app/release
 lib/hello3.dart
 /lib/file1.txt
-/file.txt
+file1.txt
